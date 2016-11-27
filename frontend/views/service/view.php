@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'hash',
         [
             'label' => Html::encode('Request URL'),
-            'value' => Html::encode("http://localhost/advanced/frontend/web/index.php?r=pseudonym/request"),
+            'value' => Html::encode("http://localhost/advanced/frontend/web/pseudonym/request"),
         ],
         [
             'label' => Html::encode('Required parameters'),Html::encode(''),
