@@ -1,6 +1,7 @@
 <?php
 
 namespace common\components;
+
 /**
  * Class CommunicationHandler
  *
@@ -18,7 +19,7 @@ class CommunicationHandler {
     /** @var string openssl chiffre */
     protected $chiffre;
     /** @var int size of initialization vector */
-    protected $iv_size;
+    protected $ivsize;
     /** @var string hash function for hmac */
     protected $hash;
 
@@ -33,7 +34,7 @@ class CommunicationHandler {
         $this->key = pack('H*', $key);
         $this->chiffre = $chiffre;
         $this->hash = $hash;
-        $this->iv_size = openssl_cipher_iv_length($chiffre);
+        $this->ivsize = openssl_cipher_iv_length($chiffre);
     }
 
     /**
@@ -42,12 +43,12 @@ class CommunicationHandler {
      * @param stdClass $params
      * @param string $code
      */
-    public function validateResponseParams($params, $code = null) {
+    public function validate_response_params($params, $code = null) {
         $properties = ['code','timestamp'];
         if (is_null($code) || $code == self::CODE_SUCCESS) {
             $properties[] = 'pseudonym';
         }
-        $this->validateParams($params, $properties);
+        $this->validate_params($params, $properties);
     }
 
     /**
@@ -55,9 +56,9 @@ class CommunicationHandler {
      *
      * @param stdClass $params
      */
-    public function validateRequestParams($params) {
+    public function validate_request_params($params) {
         $properties = ['timestamp', 'service'];
-        $this->validateParams($params, $properties);
+        $this->validate_params($params, $properties);
     }
 
     /**
@@ -66,18 +67,18 @@ class CommunicationHandler {
      * @param stdClass $params
      * @param array $properties
      */
-    protected function validateParams($params, $properties) {
+    protected function validate_params($params, $properties) {
         if (!($params instanceof \stdClass)) {
-            $this->throwException(new \Exception("Params is not correctly formatted"));
+            $this->throw_exception(new \Exception("Params is not correctly formatted"));
         }
 
         foreach ($properties as $property) {
             if (!property_exists($params, $property)) {
-                $this->throwException(new \Exception("Param " . $property . " is missing."));
+                $this->throw_exception(new \Exception("Param " . $property . " is missing."));
             }
 
             if ($property == 'timestamp' && time() - 60 * 10 > $params->$property) {
-                $this->throwException(new \Exception("Request outdated"));
+                $this->throw_exception(new \Exception("Request outdated"));
             }
         }
     }
@@ -103,9 +104,9 @@ class CommunicationHandler {
         $params->service = $service;
         $params->timestamp = $timestamp;
 
-        $ciphertext = $this->encryptData($params);
+        $ciphertext = $this->encrypt_data($params);
 
-        $mac = $this->computeHMAC($params);
+        $mac = $this->compute_hmac($params);
 
         $params = new \stdClass();
         $params->service = $service;
@@ -146,9 +147,9 @@ class CommunicationHandler {
             $array->pseudonym = $pseudonym;
         }
 
-        $cipher = $this->encryptData($array);
+        $cipher = $this->encrypt_data($array);
 
-        $mac = $this->computeHMAC($array);
+        $mac = $this->compute_hmac($array);
 
         $array = new \stdClass();
         $array->code = $code;
@@ -174,8 +175,8 @@ class CommunicationHandler {
      * @param $data
      * @return string
      */
-    protected function encryptData($data) {
-        $datastring = $this->encodeData($data);
+    protected function encrypt_data($data) {
+        $datastring = $this->encode_data($data);
         return $this->encrypt($datastring);
     }
 
@@ -189,20 +190,20 @@ class CommunicationHandler {
         try {
             $chiffre = $this->chiffre;
             $key = $this->key;
-            $iv_size = $this->iv_size;
+            $ivsize = $this->ivsize;
 
-            $iv = openssl_random_pseudo_bytes($iv_size);
+            $iv = openssl_random_pseudo_bytes($ivsize);
 
             $ciphertext = openssl_encrypt($plaintext, $chiffre, $key, OPENSSL_RAW_DATA, $iv);
 
             $ciphertext = $iv . $ciphertext;
 
-            $ciphertext_base64 = base64_encode($ciphertext);
+            $ciphertextbase64 = base64_encode($ciphertext);
 
-            return $ciphertext_base64;
+            return $ciphertextbase64;
 
         } catch (\Exception $e) {
-            $this->throwException(new \Exception("Error while encrypting data"));
+            $this->throw_exception(new \Exception("Error while encrypting data"));
         }
 
     }
@@ -213,10 +214,10 @@ class CommunicationHandler {
      * @param $ciphertext
      * @return stdClass
      */
-    public function decryptData($ciphertext) {
+    public function decrypt_data($ciphertext) {
         $datastring = $this->decrypt($ciphertext);
 
-        return $this->decodeData($datastring);
+        return $this->decode_data($datastring);
     }
 
     /**
@@ -229,21 +230,21 @@ class CommunicationHandler {
         try {
             $chiffre = $this->chiffre;
             $key = $this->key;
-            $iv_size = $this->iv_size;
+            $ivsize = $this->ivsize;
 
-            $ciphertext_dec = base64_decode($ciphertext);
+            $ciphertextdec = base64_decode($ciphertext);
 
-            $iv_dec = substr($ciphertext_dec, 0, $iv_size);
+            $ivdec = substr($ciphertextdec, 0, $ivsize);
 
-            $ciphertext_dec = substr($ciphertext_dec, $iv_size);
+            $ciphertextdec = substr($ciphertextdec, $ivsize);
 
-            $plaintext_dec = openssl_decrypt($ciphertext_dec, $chiffre, $key, OPENSSL_RAW_DATA, $iv_dec);
+            $plaintextdec = openssl_decrypt($ciphertextdec, $chiffre, $key, OPENSSL_RAW_DATA, $ivdec);
 
-            $plaintext = rtrim($plaintext_dec, "\0");
+            $plaintext = rtrim($plaintextdec, "\0");
 
             return $plaintext;
         } catch (\Exception $e) {
-            $this->throwException(new \Exception("Error while decrypting data"));
+            $this->throw_exception(new \Exception("Error while decrypting data"));
         }
     }
 
@@ -253,7 +254,7 @@ class CommunicationHandler {
      * @param \Exception $e
      * @throws \Exception
      */
-    protected function throwException($e) {
+    protected function throw_exception($e) {
         throw new \Exception($e->getMessage());
     }
 
@@ -263,7 +264,7 @@ class CommunicationHandler {
      * @param stdClass $data
      * @return string
      */
-    protected function encodeData($data) {
+    protected function encode_data($data) {
         return json_encode($data);
     }
 
@@ -272,7 +273,7 @@ class CommunicationHandler {
      * @param string $datastring
      * @return stdClass
      */
-    protected function decodeData($datastring) {
+    protected function decode_data($datastring) {
         return json_decode($datastring);
     }
 
@@ -282,11 +283,11 @@ class CommunicationHandler {
      * @param stdClass $data
      * @return string
      */
-    protected function computeHMAC($data) {
+    protected function compute_hmac($data) {
         $hash = $this->hash;
         $key = $this->key;
 
-        $datastring = $this->encodeData($data);
+        $datastring = $this->encode_data($data);
 
         return base64_encode(hash_hmac($hash, $datastring, $key));
     }
@@ -294,14 +295,14 @@ class CommunicationHandler {
     /**
      * Verifies hmac of params object
      *
-     * @param string $received_hmac
+     * @param string $receivedhmac
      * @param stdClass $data
      */
-    public function verifyHMAC($received_hmac, $data) {
-        $hmac = $this->computeHMAC($data);
+    public function verify_hmac($receivedhmac, $data) {
+        $hmac = $this->compute_hmac($data);
 
-        if (!($hmac === $received_hmac)) {
-            $this->throwException(new \Exception('MAC invalid'));
+        if (!($hmac === $receivedhmac)) {
+            $this->throw_exception(new \Exception('MAC invalid'));
         }
     }
 

@@ -32,7 +32,7 @@ return [
                 'path'     => '/',
                 'httpOnly' => true,
             ],
-            //'enableSession' => true,
+            'enableSession' => true,
             //'authTimeout' => 120,
         ],
         // ----------------------------
@@ -44,7 +44,7 @@ return [
                 'httpOnly' => true,
                 'path'     => '/',
             ],
-            'timeout' => 600,
+            'timeout' => 60,
             // ------------------------
         ],
         'log' => [

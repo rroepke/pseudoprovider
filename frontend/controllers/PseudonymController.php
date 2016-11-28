@@ -74,11 +74,11 @@ class PseudonymController extends Controller {
         $url = $serviceModel->return_url;
 
         $comHandler = new CommunicationHandler($key,$serviceModel->chiffre,$serviceModel->hash);
-        $params = $comHandler->decryptData($cipher);
+        $params = $comHandler->decrypt_data($cipher);
 
-        $comHandler->validateRequestParams($params);
+        $comHandler->validate_request_params($params);
 
-        $comHandler->verifyHMAC($mac,$params);
+        $comHandler->verify_hmac($mac,$params);
 
         if ($service != $params->service){
             throw new InvalidTokenException('Request (Service) is not valid');
