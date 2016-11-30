@@ -128,3 +128,8 @@ a.desc:after {
 
 .mydiv {display:none;}
 .show {display:block;}
+
+div.required label.control-label:after {
+    content: " *";
+    color: red;
+}

@@ -35,7 +35,7 @@ class Service extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'url'], 'required'],
+            [['name', 'url', 'return_url', 'chiffre', 'hash'], 'required'],
             [['created_by', 'timestamp'], 'integer'],
             [['name', 'chiffre', 'hash'], 'string', 'max' => 255],
             [['url', 'description', 'return_url', 'image_url'], 'string', 'max' => 2000],
