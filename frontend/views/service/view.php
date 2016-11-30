@@ -50,6 +50,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => $attr,
     ]) ?>
 
+    <?php if ($model->created_by == Yii::$app->user->id): ?>
+
     <h2><?= Html::encode("Installation") ?></h2>
 
     <?php $attr = [
@@ -120,4 +122,5 @@ $this->params['breadcrumbs'][] = $this->title;
         You can download a PHP-client to connect to the Pseudonymity Provider more easily. To download click <?= Html::a(Html::encode("here"),['service/download'])?>.
     </p>
 
+    <?php endif; ?>
 </div>

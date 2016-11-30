@@ -41,13 +41,13 @@ AppAsset::register($this);
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
-        $menuItems[] = ['label' => 'Signin', 'url' => ['/user/security/login']];
+        $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
     } else {
         $menuItems[] = ['label' => 'Services', 'url' => ['/service/index']];
         if (Yii::$app->user->identity->isAdmin){
             $menuItems[] = ['label' => 'User Management', 'url' => ['/user/admin/index']];
         }
-        $menuItems[] = ['label' => 'Account', 'url' => ['/user/settings/profile']];
+        $menuItems[] = ['label' => 'Account', 'url' => ['/user/settings/account']];
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(

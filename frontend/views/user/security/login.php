@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
  * @var dektrium\user\Module           $module
  */
 
-$this->title = Yii::t('user', 'Sign in');
+$this->title = Yii::t('user', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -83,7 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'rememberMe')->checkbox(['tabindex' => '4']) ?>
 
                 <?= Html::submitButton(
-                    Yii::t('user', 'Sign in'),
+                    Yii::t('user', 'Log in'),
                     ['class' => 'btn btn-primary btn-block', 'tabindex' => '3']
                 ) ?>
 
