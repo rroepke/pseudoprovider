@@ -16,11 +16,25 @@ use Yii;
  * @property string $return_url
  * @property integer $timestamp
  * @property string $token
- * @property string $chiffre
+ * @property string $cipher
  * @property string $hash
  */
 class Service extends \yii\db\ActiveRecord
 {
+    const SCENARIO_WEB = 'web';
+    const SCENARIO_APP = 'app';
+
+    /**
+     * @return array
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_WEB] = ['name', 'type', 'url', 'description', 'return_url', 'image_url', 'created_by', 'timestamp', 'cipher', 'hash'];
+        $scenarios[self::SCENARIO_APP] = ['name', 'type', 'description', 'created_by', 'timestamp', 'cipher', 'hash'];
+        return $scenarios;
+    }
+
     /**
      * @inheritdoc
      */
@@ -35,9 +49,10 @@ class Service extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'url', 'return_url', 'chiffre', 'hash'], 'required'],
+            [['name', 'cipher', 'hash'], 'required'],
+            [['return_url', 'url'], 'required', 'on' => self::SCENARIO_WEB],
             [['created_by', 'timestamp'], 'integer'],
-            [['name', 'chiffre', 'hash'], 'string', 'max' => 255],
+            [['name', 'cipher', 'hash'], 'string', 'max' => 255],
             [['url', 'description', 'return_url', 'image_url'], 'string', 'max' => 2000],
             ['name', 'unique']
         ];
@@ -56,8 +71,8 @@ class Service extends \yii\db\ActiveRecord
             'description' => 'Description',
             'return_url' => 'Return URL',
             'timestamp' => 'Registered since',
-            'token' => 'Token',
-            'chiffre' => 'Chiffre',
+            'token' => 'Secret Key',
+            'cipher' => 'Cipher',
             'hash' => 'Hash',
             'image_url' => 'Image URL',
         ];

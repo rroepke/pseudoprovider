@@ -6,6 +6,8 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Service */
 
+$suffix = $model->type;
+
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Services', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -16,7 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php if ($model->created_by == Yii::$app->user->id): ?>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+
+        <?= Html::a('Update', ['update', 'id' => $model->id, 'type' => $model->type], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -27,20 +30,26 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?>
     </p>
 
-    <?php $attr = [
-        'name',
-        'url:url',
-        'description',
-        'timestamp:datetime',
-        [
+    <?php $attr = ['name'];?>
+
+    <?php if ($model->type == 'web') {
+        $attr[] = 'url:url';
+    }?>
+
+    <?php $attr[] = 'description';?>
+
+    <?php $attr[] = 'timestamp:datetime';?>
+
+    <?php if ($model->type == 'web') {
+        $attr[] = [
             'label' => Html::encode('Image URL'),
             'format' => 'raw',
-            'value' => is_null($model->image_url)?$model->image_url:Html::a(Html::encode($model->image_url),$model->image_url),//" MAC over plaintext ".Html::tag("b","JSON")." string for integrity and authenticity",
-        ],
-    ]; ?>
+            'value' => (strlen($model->image_url)==0)?'<span class="not-set">(not set)</span>':Html::a(Html::encode($model->image_url),$model->image_url),//" MAC over plaintext ".Html::tag("b","JSON")." string for integrity and authenticity",
+        ];
+    } ?>
 
     <?php
-        if ($model->created_by == Yii::$app->user->id) {
+        if ($model->type == 'web' && $model->created_by == Yii::$app->user->id) {
             $attr[] = 'return_url:url';
         }
     ?>
@@ -56,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $attr = [
         'token',
-        'chiffre',
+        'cipher',
         'hash',
         [
             'label' => Html::encode('Request URL'),
@@ -70,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
         [
             'label' => Html::encode(''),
             'format' => 'raw',
-            'value' => Html::tag("code","cipher")." - Encrypted ".Html::tag("b","JSON")." string containing:".Html::tag('br').
+            'value' => Html::tag("code","ciphertext")." - Encrypted ".Html::tag("b","JSON")." string containing:".Html::tag('br').
                 Html::tag('ul',
                     Html::tag('li',
                         Html::tag("i","service")." - Name used for service registration, i.e. ".Html::tag('b',$model->name)
@@ -93,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
         [
             'label' => Html::encode(''),
             'format' => 'raw',
-            'value' => Html::tag("code","cipher")." - Encrypted ".Html::tag("b","JSON")." string containing:".Html::tag('br').
+            'value' => Html::tag("code","ciphertext")." - Encrypted ".Html::tag("b","JSON")." string containing:".Html::tag('br').
                 Html::tag('ul',
                     Html::tag('li',
                         Html::tag("i","code")." - SUCCESS or FAIL"

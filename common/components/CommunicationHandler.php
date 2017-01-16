@@ -16,8 +16,8 @@ class CommunicationHandler {
 
     /** @var string key material */
     protected $key;
-    /** @var string openssl chiffre */
-    protected $chiffre;
+    /** @var string openssl cipher */
+    protected $cipher;
     /** @var int size of initialization vector */
     protected $ivsize;
     /** @var string hash function for hmac */
@@ -26,15 +26,15 @@ class CommunicationHandler {
     /**
      * CommunicationHandler constructor.
      * @param string $key
-     * @param string $chiffre
+     * @param string $cipher
      * @param string $hash
      */
-    public function __construct($key, $chiffre = 'AES-256-CBC', $hash = 'sha256') {
+    public function __construct($key, $cipher = 'AES-256-CBC', $hash = 'sha256') {
 
         $this->key = pack('H*', $key);
-        $this->chiffre = $chiffre;
+        $this->cipher = $cipher;
         $this->hash = $hash;
-        $this->ivsize = openssl_cipher_iv_length($chiffre);
+        $this->ivsize = openssl_cipher_iv_length($cipher);
     }
 
     /**
@@ -110,7 +110,7 @@ class CommunicationHandler {
 
         $params = new \stdClass();
         $params->service = $service;
-        $params->cipher = $ciphertext;
+        $params->ciphertext = $ciphertext;
         $params->mac = $mac;
 
         $query = http_build_query($params);
@@ -153,7 +153,7 @@ class CommunicationHandler {
 
         $array = new \stdClass();
         $array->code = $code;
-        $array->cipher = $cipher;
+        $array->ciphertext = $cipher;
         $array->mac = $mac;
 
         $query = http_build_query($array);
@@ -188,13 +188,13 @@ class CommunicationHandler {
      */
     protected function encrypt($plaintext) {
         try {
-            $chiffre = $this->chiffre;
+            $cipher = $this->cipher;
             $key = $this->key;
             $ivsize = $this->ivsize;
 
             $iv = openssl_random_pseudo_bytes($ivsize);
 
-            $ciphertext = openssl_encrypt($plaintext, $chiffre, $key, OPENSSL_RAW_DATA, $iv);
+            $ciphertext = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA, $iv);
 
             $ciphertext = $iv . $ciphertext;
 
@@ -228,7 +228,7 @@ class CommunicationHandler {
      */
     protected function decrypt($ciphertext) {
         try {
-            $chiffre = $this->chiffre;
+            $cipher = $this->cipher;
             $key = $this->key;
             $ivsize = $this->ivsize;
 
@@ -238,7 +238,7 @@ class CommunicationHandler {
 
             $ciphertextdec = substr($ciphertextdec, $ivsize);
 
-            $plaintextdec = openssl_decrypt($ciphertextdec, $chiffre, $key, OPENSSL_RAW_DATA, $ivdec);
+            $plaintextdec = openssl_decrypt($ciphertextdec, $cipher, $key, OPENSSL_RAW_DATA, $ivdec);
 
             $plaintext = rtrim($plaintextdec, "\0");
 

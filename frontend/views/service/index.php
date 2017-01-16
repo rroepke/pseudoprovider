@@ -14,7 +14,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Service', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Register Web Service', ['register', 'type' => 'web'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Register App', ['register', 'type' => 'app'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -32,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' =>   'description',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return substr($model->description,0,20).((strlen($model->description)>20)?'...':'');
+                    return substr($model->description,0,30).((strlen($model->description)>30)?'...':'');
                 },
             ],
             'timestamp:datetime',

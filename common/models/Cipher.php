@@ -11,14 +11,14 @@ use Yii;
  * @property string $name
  * @property string $param
  */
-class Chiffre extends \yii\db\ActiveRecord
+class Cipher extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'chiffre';
+        return 'cipher';
     }
 
     /**

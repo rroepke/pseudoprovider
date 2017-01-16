@@ -13,8 +13,8 @@ class CommunicationHandler {
 
     /** @var string key material */
     protected $key;
-    /** @var string openssl chiffre */
-    protected $chiffre;
+    /** @var string openssl cipher */
+    protected $cipher;
     /** @var int size of initialization vector */
     protected $ivsize;
     /** @var string hash function for hmac */
@@ -23,15 +23,15 @@ class CommunicationHandler {
     /**
      * CommunicationHandler constructor.
      * @param string $key
-     * @param string $chiffre
+     * @param string $cipher
      * @param string $hash
      */
-    public function __construct($key, $chiffre = 'AES-256-CBC', $hash = 'sha256') {
+    public function __construct($key, $cipher = 'AES-256-CBC', $hash = 'sha256') {
 
         $this->key = pack('H*', $key);
-        $this->chiffre = $chiffre;
+        $this->cipher = $cipher;
         $this->hash = $hash;
-        $this->ivsize = openssl_cipher_iv_length($chiffre);
+        $this->ivsize = openssl_cipher_iv_length($cipher);
     }
 
     /**
@@ -41,7 +41,7 @@ class CommunicationHandler {
      * @param string $code
      */
     public function validate_response_params($params, $code = null) {
-        $properties = ['code', 'timestamp'];
+        $properties = ['code','timestamp'];
         if (is_null($code) || $code == self::CODE_SUCCESS) {
             $properties[] = 'pseudonym';
         }
@@ -89,7 +89,7 @@ class CommunicationHandler {
      * @return string
      */
     public function build_request($url, $service, $timestamp = null) {
-        function ends_with($str, $sub) {
+        function endsWith($str, $sub) {
             return (substr($str, strlen($str) - strlen($sub)) === $sub);
         }
 
@@ -107,12 +107,12 @@ class CommunicationHandler {
 
         $params = new \stdClass();
         $params->service = $service;
-        $params->cipher = $ciphertext;
+        $params->ciphertext = $ciphertext;
         $params->mac = $mac;
 
         $query = http_build_query($params);
 
-        if (strpos($url, '?') > 0 && ends_with($url, '?')) {
+        if (strpos($url, '?') > 0 && endsWith($url, '?')) {
             $request = $url . $query;
         } else if (strpos($url, '?') > 0) {
             $request = $url . '&' . $query;
@@ -150,7 +150,7 @@ class CommunicationHandler {
 
         $array = new \stdClass();
         $array->code = $code;
-        $array->cipher = $cipher;
+        $array->ciphertext = $cipher;
         $array->mac = $mac;
 
         $query = http_build_query($array);
@@ -185,13 +185,13 @@ class CommunicationHandler {
      */
     protected function encrypt($plaintext) {
         try {
-            $chiffre = $this->chiffre;
+            $cipher = $this->cipher;
             $key = $this->key;
             $ivsize = $this->ivsize;
 
             $iv = openssl_random_pseudo_bytes($ivsize);
 
-            $ciphertext = openssl_encrypt($plaintext, $chiffre, $key, OPENSSL_RAW_DATA, $iv);
+            $ciphertext = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA, $iv);
 
             $ciphertext = $iv . $ciphertext;
 
@@ -225,7 +225,7 @@ class CommunicationHandler {
      */
     protected function decrypt($ciphertext) {
         try {
-            $chiffre = $this->chiffre;
+            $cipher = $this->cipher;
             $key = $this->key;
             $ivsize = $this->ivsize;
 
@@ -235,7 +235,7 @@ class CommunicationHandler {
 
             $ciphertextdec = substr($ciphertextdec, $ivsize);
 
-            $plaintextdec = openssl_decrypt($ciphertextdec, $chiffre, $key, OPENSSL_RAW_DATA, $ivdec);
+            $plaintextdec = openssl_decrypt($ciphertextdec, $cipher, $key, OPENSSL_RAW_DATA, $ivdec);
 
             $plaintext = rtrim($plaintextdec, "\0");
 

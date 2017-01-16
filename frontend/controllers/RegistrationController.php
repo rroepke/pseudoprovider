@@ -13,6 +13,10 @@ use Yii;
 use dektrium\user\controllers\RegistrationController as BaseRegistrationController;
 use dektrium\user\models\User;
 
+/**
+ * Class RegistrationController
+ * @package frontend\controllers
+ */
 class RegistrationController extends BaseRegistrationController{
 
     public function actionRegister() {

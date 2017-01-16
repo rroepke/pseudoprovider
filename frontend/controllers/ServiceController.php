@@ -2,8 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\models\App;
+use common\models\WebService;
 use Yii;
-use common\models\Chiffre;
+use common\models\Cipher;
 use common\models\Hash;
 use common\models\Service;
 use yii\data\ActiveDataProvider;
@@ -14,7 +16,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ServiceController implements the CRUD actions for Service model.
+ * Class ServiceController
+ * @package frontend\controllers
  */
 class ServiceController extends Controller
 {
@@ -44,12 +47,12 @@ class ServiceController extends Controller
             ],
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
-                'only' => ['create', 'index', 'delete', 'update'],
+                'only' => ['register', 'index', 'delete', 'update'],
                 'rules' => [
                     // allow authenticated users
                     [
                         'allow' => true,
-                        'actions' => ['create','index', 'delete', 'update'],
+                        'actions' => ['register','index', 'delete', 'update'],
                         'roles' => ['@'],
                     ],
                     // everything else is denied
@@ -86,63 +89,6 @@ class ServiceController extends Controller
     }
 
     /**
-     * Creates a new Service model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $chiffres = ArrayHelper::map(Chiffre::find()->all(), 'param', 'param');
-        $hashes = ArrayHelper::map(Hash::find()->all(), 'param', 'param');
-
-        $model = new Service();
-
-        if ($model->load(Yii::$app->request->post())) {
-            $id = Yii::$app->user->getId();
-            $model->created_by = (is_null($id))?:$id;
-            $model->timestamp = time();
-            $model->token = hash('sha256',time().$model->name.$model->url);
-            if ($model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        }
-        return $this->render('create', [
-            'chiffres' => $chiffres,
-            'hashes' => $hashes,
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing Service model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws ForbiddenHttpException
-     */
-    public function actionUpdate($id)
-    {
-        $chiffres = ArrayHelper::map(Chiffre::find()->all(), 'param', 'param');
-        $hashes = ArrayHelper::map(Hash::find()->all(), 'param', 'param');
-
-        $model = $this->findModel($id);
-
-        if ($model->created_by !== Yii::$app->user->id){
-            throw new ForbiddenHttpException('You are not allowed to perform this action.');
-        }
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'chiffres' => $chiffres,
-                'hashes' => $hashes,
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
      * Deletes an existing Service model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
@@ -172,22 +118,68 @@ class ServiceController extends Controller
     }
 
     /**
+     * Registers a new service
+     * @param string $type
      * @return string|\yii\web\Response
-     * TODO
-     *
      */
-    public function actionRegister(){
-        $model = new service();
+    public function actionRegister($type = 'web'){
+        $ciphers = ArrayHelper::map(Cipher::find()->all(), 'param', 'param');
+        $hashes = ArrayHelper::map(Hash::find()->all(), 'param', 'param');
+
+        $model = new Service(['scenario' => $type]);
+        $model->type = $type;
+
+        if ($model->load(Yii::$app->request->post())) {
+            $id = Yii::$app->user->getId();
+            $model->type = $type;
+            $model->created_by = (is_null($id))?:$id;
+            $model->timestamp = time();
+            $model->token = hash('sha256',time().$model->name.$model->url);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+        return $this->render('register', [
+            'ciphers' => $ciphers,
+            'hashes' => $hashes,
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Service model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @param string $type
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionUpdate($id, $type = 'web')
+    {
+        $ciphers = ArrayHelper::map(Cipher::find()->all(), 'param', 'param');
+        $hashes = ArrayHelper::map(Hash::find()->all(), 'param', 'param');
+
+        $model = $this->findModel($id);
+        $model->scenario = $type;
+
+        if ($model->created_by !== Yii::$app->user->id){
+            throw new ForbiddenHttpException('You are not allowed to perform this action.');
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('register', [
+            return $this->render('update', [
+                'ciphers' => $ciphers,
+                'hashes' => $hashes,
                 'model' => $model,
             ]);
         }
     }
 
+    /**
+     * Action to download communication handler file
+     */
     public function actionDownload(){
         $path = Yii::getAlias('@webroot') . '/files';
         $file = $path . '/CommunicationHandler.php';
