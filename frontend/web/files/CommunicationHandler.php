@@ -1,4 +1,7 @@
 <?php
+
+
+
 /**
  * Class CommunicationHandler
  *
@@ -52,9 +55,9 @@ class CommunicationHandler {
      * Validates request params
      *
      * @param stdClass $params
+     * @param array $properties
      */
-    public function validate_request_params($params) {
-        $properties = ['timestamp', 'service'];
+    public function validate_request_params($params, $properties = ['timestamp', 'service']) {
         $this->validate_params($params, $properties);
     }
 
@@ -100,55 +103,6 @@ class CommunicationHandler {
         $params = new \stdClass();
         $params->service = $service;
         $params->timestamp = $timestamp;
-        $params->user = 'user';
-        $params->password = 'password';
-
-        $ciphertext = $this->encrypt_data($params);
-
-        $mac = $this->compute_hmac($params);
-
-        $params = new \stdClass();
-        $params->service = $service;
-        $params->cipher = $ciphertext;
-        $params->mac = $mac;
-
-        $query = http_build_query($params);
-
-        if (strpos($url, '?') > 0 && ends_with($url, '?')) {
-            $request = $url . $query;
-        } else if (strpos($url, '?') > 0) {
-            $request = $url . '&' . $query;
-        } else {
-            $request = $url . '?' . $query;
-        }
-
-        return $request;
-    }
-
-    /**
-     * Builds app request url
-     *
-     * @param string $url
-     * @param string $service
-     * @param string $username
-     * @param string $password
-     * @param null $timestamp
-     * @return string
-     */
-    public function build_app_request($url, $service, $username = 'user', $password = 'password', $timestamp = null) {
-        function ends_with($str, $sub) {
-            return (substr($str, strlen($str) - strlen($sub)) === $sub);
-        }
-
-        if (is_null($timestamp)) {
-            $timestamp = time();
-        }
-
-        $params = new \stdClass();
-        $params->service = $service;
-        $params->timestamp = $timestamp;
-        $params->username = $username;
-        $params->password = $password;
 
         $ciphertext = $this->encrypt_data($params);
 
@@ -182,9 +136,36 @@ class CommunicationHandler {
      * @return string
      */
     public function build_response($url, $code, $timestamp = null, $pseudonym = null) {
+
+        $array = $this->get_response_params($code,$timestamp,$pseudonym);
+
+        $query = http_build_query($array);
+
+        if (strpos($url, '?') > 0 && stringEndsWith('?')) {
+            $response = $url . $query;
+        } else if (strpos($url, '?') > 0) {
+            $response = $url . '&' . $query;
+        } else {
+            $response = $url . '?' . $query;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Returns response params
+     *
+     * @param $code
+     * @param null $timestamp
+     * @param null $pseudonym
+     * @return \stdClass
+     */
+    public function get_response_params($code, $timestamp = null, $pseudonym = null) {
+
         if (is_null($timestamp)) {
             $timestamp = time();
         }
+
         $array = new \stdClass();
         $array->code = $code;
         $array->timestamp = $timestamp;
@@ -199,20 +180,10 @@ class CommunicationHandler {
 
         $array = new \stdClass();
         $array->code = $code;
-        $array->cipher = $cipher;
+        $array->ciphertext = $cipher;
         $array->mac = $mac;
 
-        $query = http_build_query($array);
-
-        if (strpos($url, '?') > 0 && stringEndsWith('?')) {
-            $response = $url . $query;
-        } else if (strpos($url, '?') > 0) {
-            $response = $url . '&' . $query;
-        } else {
-            $response = $url . '?' . $query;
-        }
-
-        return $response;
+        return $array;
     }
 
     /**
