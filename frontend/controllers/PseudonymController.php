@@ -3,14 +3,18 @@
 namespace frontend\controllers;
 
 use common\components\CommunicationHandler;
+use common\models\User;
 use Yii;
 use common\components\exceptions\NotRegisteredException;
 use common\components\exceptions\InvalidTokenException;
 use common\models\Pseudonym;
 use common\models\Service;
 use yii\data\ActiveDataProvider;
+use yii\filters\ContentNegotiator;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use dektrium\user\helpers\Password;
+use yii\web\Response;
 
 /**
  * Class PseudonymController
@@ -34,9 +38,16 @@ class PseudonymController extends Controller {
      */
     public function behaviors() {
         return [
+            [
+                'class' => ContentNegotiator::className(),
+                'only' => ['app-request'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
-                'only' => ['request', 'index'],
+                'only' => ['web-request', 'app-request', 'index'],
                 'rules' => [
                     // deny all POST requests
                     [
@@ -49,6 +60,12 @@ class PseudonymController extends Controller {
                         'allow' => true,
                         'actions' => ['web-request', 'index'],
                         'roles' => ['@'],
+                    ],
+                    // allow all users
+                    [
+                        'allow' => true,
+                        'actions' => ['app-request'],
+                        'roles' => ['?'],
                     ],
                     // everything else is denied
                 ],
@@ -79,7 +96,7 @@ class PseudonymController extends Controller {
      * @throws InvalidTokenException
      * @throws NotRegisteredException
      */
-    public function actionApiRequest($cipher, $service, $mac) {
+    public function actionWebRequest($cipher, $service, $mac) {
 
         $serviceModel = Service::find()->where(['name' => $service])->one();
 
@@ -148,8 +165,8 @@ class PseudonymController extends Controller {
      * @throws NotRegisteredException
      * @internal param int $id
      */
-    public function actionWebRequest($cipher, $service, $mac) {
-
+    public function actionAppRequest($cipher, $service, $mac) {
+        try {
         $serviceModel = Service::find()->where(['name' => $service])->one();
 
         if (is_null($serviceModel)) {
@@ -157,54 +174,48 @@ class PseudonymController extends Controller {
         }
 
         $key = $serviceModel->token;
-        $url = $serviceModel->return_url;
 
         $comHandler = new CommunicationHandler($key,$serviceModel->cipher,$serviceModel->hash);
         $params = $comHandler->decrypt_data($cipher);
 
-        $comHandler->validate_request_params($params);
+        $comHandler->validate_request_params($params, ['username', 'password', 'timestamp', 'service']);
 
         $comHandler->verify_hmac($mac,$params);
 
         if ($service != $params->service){
-            throw new InvalidTokenException('Request (Service) is not valid');
+            $params = $comHandler->get_response_params($comHandler::CODE_FAIL, time());
+            return $params;
+        }
+
+        $userModel = User::find()->where([
+            'username' => $params->username
+        ])->one();
+
+        $password = $params->password;
+        $hash = $userModel->password_hash;
+
+        $validPassword = Yii::$app->getSecurity()->validatePassword($password, $hash);
+
+        if (!$validPassword){
+            $params = $comHandler->get_response_params($comHandler::CODE_FAIL, time());
+
+            return $params;
         }
 
         $pseudonymModel = Pseudonym::find()->where([
-            'user' => Yii::$app->user->id
+            'user' => $userModel->id
         ])->one();
 
-        if (Yii::$app->request->isPost) {
+        $pseudonym = $pseudonymModel->pseudonym;
+        $params = $comHandler->get_response_params($comHandler::CODE_SUCCESS, time(), $pseudonym);
 
-            $postdata = Yii::$app->request->post();
+        return $params;
 
-            if (array_key_exists('grant',$postdata) && $postdata['grant'] == 'grant'){
-
-                $pseudonym = $pseudonymModel->pseudonym;
-
-                $response = $comHandler->build_response($url, $comHandler::CODE_SUCCESS, time(), $pseudonym);
-
-                $this->redirect($response);
-
-            } else if (array_key_exists('deny',$postdata) && $postdata['deny'] == 'deny'){
-
-                $response = $comHandler->build_response($url, $comHandler::CODE_FAIL);
-
-                $this->redirect($response);
-            }
+        } catch (\Exception $err){
+            $array = new \stdClass();
+            $array->code = 'fail';
+            return $array;
         }
-
-        $model = new \stdClass();
-        $model->service = $service;
-        $model->cipher = $cipher;
-
-        return $this->render('request', [
-            'model' => $model,
-            'service' => $serviceModel,
-            'pseudonym' => $pseudonymModel,
-        ]);
-
-        return $this->render('error');
     }
 
     /**

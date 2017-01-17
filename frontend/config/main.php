@@ -17,6 +17,9 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         // TODO 3 - Comment out -------
 //        'user' => [
@@ -66,6 +69,7 @@ return [
             // Use pretty URLs
             'enablePrettyUrl' => true,
             'rules' => [
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'api'],
             ],
         ],
         // TODO 9 - Insert -------------------------------------------

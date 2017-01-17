@@ -34,9 +34,9 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
                 'class' => 'nav nav-pills nav-stacked',
             ],
             'items' => [
-                ['label' => Yii::t('user', 'Account'), 'url' => ['/user/settings/account']],
+                ['label' => Yii::t('user', 'Account settings'), 'url' => ['/user/settings/account']],
                 [
-                    'label' => Yii::t('user', 'Networks'),
+                    'label' => Yii::t('user', 'Network settings'),
                     'url' => ['/user/settings/networks'],
                     'visible' => $networksVisible
                 ],

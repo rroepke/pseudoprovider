@@ -19,6 +19,10 @@ use dektrium\user\models\User;
  */
 class RegistrationController extends BaseRegistrationController{
 
+    /**
+     * Handle register action
+     * @return string
+     */
     public function actionRegister() {
 
         $this->on(self::EVENT_AFTER_REGISTER,function ($event) {
@@ -38,6 +42,11 @@ class RegistrationController extends BaseRegistrationController{
         return $result;
     }
 
+    /**
+     * Handle connect action
+     * @param string $code
+     * @return string
+     */
     public function actionConnect($code) {
 
         $this->on(self::EVENT_AFTER_CONNECT,function ($event) {

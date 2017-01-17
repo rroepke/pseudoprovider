@@ -20,7 +20,7 @@ use yii\web\View;
  */
 
 $this->title = Yii::t('user', 'Update user account');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('user', 'Users'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('user', 'User Management'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -44,16 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'label' => Yii::t('user', 'Account details'),
                             'url' => ['/user/admin/update', 'id' => $user->id]
                         ],
-                        [
-                            'label' => Yii::t('user', 'Profile details'),
-                            'url' => ['/user/admin/update-profile', 'id' => $user->id]
-                        ],
                         ['label' => Yii::t('user', 'Information'), 'url' => ['/user/admin/info', 'id' => $user->id]],
-                        [
-                            'label' => Yii::t('user', 'Assignments'),
-                            'url' => ['/user/admin/assignments', 'id' => $user->id],
-                            'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
-                        ],
                         '<hr>',
                         [
                             'label' => Yii::t('user', 'Confirm'),

@@ -72,8 +72,8 @@ class Service extends \yii\db\ActiveRecord
             'return_url' => 'Return URL',
             'timestamp' => 'Registered since',
             'token' => 'Secret Key',
-            'cipher' => 'Cipher',
-            'hash' => 'Hash',
+            'cipher' => 'Cipher Suite',
+            'hash' => 'Hash Function',
             'image_url' => 'Image URL',
         ];
     }
