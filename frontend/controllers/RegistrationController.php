@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Rene
- * Date: 19.11.2016
- * Time: 14:41
- */
 
 namespace frontend\controllers;
 
@@ -16,6 +10,8 @@ use dektrium\user\models\User;
 /**
  * Class RegistrationController
  * @package frontend\controllers
+ * @author Rene Roepke
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class RegistrationController extends BaseRegistrationController{
 

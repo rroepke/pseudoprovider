@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * About view
+ *
+ * @author Rene Roepke
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 /* @var $this yii\web\View */
 
 use yii\helpers\Html;

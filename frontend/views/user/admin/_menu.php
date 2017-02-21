@@ -1,12 +1,10 @@
 <?php
 
-/*
- * This file is part of the Dektrium project
+/**
+ * Menu view
  *
- * (c) Dektrium project <http://github.com/dektrium>
- *
- * For the full copyright and license information, please view the LICENSE.md
- * file that was distributed with this source code.
+ * @author Rene Roepke
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 use yii\bootstrap\Nav;
@@ -20,7 +18,7 @@ use yii\bootstrap\Nav;
     ],
     'items' => [
         [
-            'label'   => Yii::t('user', 'Users'),
+            'label'   => Yii::t('user', 'User Management'),
             'url'     => ['/user/admin/index'],
         ],
     ],

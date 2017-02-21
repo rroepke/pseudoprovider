@@ -19,6 +19,8 @@ use yii\web\Response;
 /**
  * Class PseudonymController
  * @package frontend\controllers
+ * @author Rene Roepke
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class PseudonymController extends Controller {
 
@@ -47,7 +49,7 @@ class PseudonymController extends Controller {
             ],
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
-                'only' => ['web-request', 'app-request', 'index'],
+                'only' => ['web-request', 'app-request'],
                 'rules' => [
                     // deny all POST requests
                     [
@@ -58,7 +60,7 @@ class PseudonymController extends Controller {
                     // allow authenticated users
                     [
                         'allow' => true,
-                        'actions' => ['web-request', 'index'],
+                        'actions' => ['web-request'],
                         'roles' => ['@'],
                     ],
                     // allow all users
@@ -71,20 +73,6 @@ class PseudonymController extends Controller {
                 ],
             ],
         ];
-    }
-
-    /**
-     * Displays a list of pseudonyms.
-     * @return mixed
-     */
-    public function actionIndex() {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Pseudonym::find(),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
     }
 
     /**
@@ -215,32 +203,6 @@ class PseudonymController extends Controller {
             $array = new \stdClass();
             $array->code = 'fail';
             return $array;
-        }
-    }
-
-    /**
-     * Displays a single Pseudonym model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id) {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Finds the Service model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Pseudonym the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id) {
-        if (($model = Pseudonym::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 

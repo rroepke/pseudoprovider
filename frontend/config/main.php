@@ -93,11 +93,6 @@ return [
             ],
         ],
         // -----------------------------------------------------------
-        // TODO 13 - Insert for rbac ---------------------------------
-//        'authManager' => [
-//            'class' => 'dektrium\rbac\components\DbManager',
-//            'defaultRoles' => ['admin', 'author']
-//        ],
     ],
     // TODO 1 - Insert -----------------------
     'modules' => [
@@ -121,10 +116,10 @@ return [
             // --------------------
             'controllerMap' => [
                 'registration' => 'frontend\controllers\RegistrationController',
+                'admin' => 'frontend\controllers\AdminController',
+                'settings' => 'frontend\controllers\SettingsController',
             ]
         ],
-        // TODO 12 - Insert for rbac
-        //'rbac' => 'dektrium\rbac\RbacWebModule',
     ],
     // ---------------------------------------
     'params' => $params,

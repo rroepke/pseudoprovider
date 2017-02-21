@@ -1,7 +1,12 @@
 <?php
-/* @var $this yii\web\View */
+/**
+ * Pseudonym request view
+ *
+ * @author Rene Roepke
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-use yii\bootstrap\Html;
+/* @var $this yii\web\View */
 
 $this->title = "Pseudonym Request";
 

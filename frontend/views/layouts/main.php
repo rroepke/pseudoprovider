@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Main layout
+ *
+ * @author Rene Roepke
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -37,7 +44,6 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
         ['label' => 'About', 'url' => ['/site/about']],
-        // ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
@@ -75,7 +81,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; PseudoProvider <?= date('Y') ?> | <?= Html::a('Contact',\yii\helpers\Url::to(['site/contact']))?></p>
+        <p class="pull-left">&copy; PseudoProvider <?= date('Y') ?> | <?= Html::a('Contact',\yii\helpers\Url::to(['/site/contact']))?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
