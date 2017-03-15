@@ -8,6 +8,7 @@
  */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -76,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'hash',
         [
             'label' => Html::encode('Request URL'),
-            'value' => Html::encode("http://localhost/advanced/frontend/web/pseudonym/request"),
+            'value' => Html::encode(Url::toRoute('pseudonym/request', true)),//Yii::$app->homeUrl . "/frontend/web/pseudonym/request"),
         ],
         [
             'label' => Html::encode('Required parameters'),Html::encode(''),

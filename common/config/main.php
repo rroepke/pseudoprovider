@@ -24,7 +24,7 @@ return [
                 'host' => $c['smtp_host'],
                 'username' => $c['smtp_username'],
                 'password' => $c['smtp_password'],
-                'port' => '2525',
+                'port' => $c['smtp_port'],
                 'encryption' => 'tls',
             ],
             // -----------------------------
