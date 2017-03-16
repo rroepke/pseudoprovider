@@ -3,6 +3,7 @@
 $c = parse_ini_file(__DIR__ . '/../../common/config/secure.ini', true);
 
 return [
+    'name' => 'PseudoProvider',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
         'cache' => [
