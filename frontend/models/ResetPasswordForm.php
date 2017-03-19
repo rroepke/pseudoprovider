@@ -7,6 +7,10 @@ use common\models\User;
 
 /**
  * Password reset form
+ *
+ * @author Rene Roepke
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ResetPasswordForm extends Model
 {

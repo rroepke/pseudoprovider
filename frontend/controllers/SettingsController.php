@@ -16,11 +16,13 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
 /**
- * SettingsController manages updating user settings (e.g. profile, email and password).
+ * SettingsController manages updating user settings
  *
  * @property \dektrium\user\Module $module
+ * *
+ * @author Rene Roepke
  *
- * @author Dmitry Erofeev <dmeroff@gmail.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class SettingsController extends BaseSettingsController
 {

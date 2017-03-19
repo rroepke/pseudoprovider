@@ -7,7 +7,9 @@ use Yii;
 /**
  * This is the model class for table "service".
  *
- * @property integer $id
+ * @author Rene Roepke
+ *
+ * @property integer $id
  * @property string $name
  * @property string $url
  * @property integer $created_by

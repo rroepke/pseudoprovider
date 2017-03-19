@@ -6,6 +6,9 @@ use yii\base\Model;
 
 /**
  * Login form
+ *
+ * @author Rene Roepke
+ *
  */
 class LoginForm extends Model
 {

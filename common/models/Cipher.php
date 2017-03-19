@@ -7,9 +7,12 @@ use Yii;
 /**
  * This is the model class for table "cipher".
  *
+ * @author Rene Roepke
+ *
  * @property integer $id
  * @property string $name
  * @property string $param
+ *
  */
 class Cipher extends \yii\db\ActiveRecord
 {

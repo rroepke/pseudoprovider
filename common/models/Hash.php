@@ -7,6 +7,8 @@ use Yii;
 /**
  * This is the model class for table "mode".
  *
+ * @author Rene Roepke
+ *
  * @property integer $id
  * @property string $name
  * @property string $param
