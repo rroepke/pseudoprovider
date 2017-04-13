@@ -16,6 +16,8 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
+            'class' => 'common\components\Request',
+            'web' => '/frontend/web',
             'csrfParam' => '_csrf-frontend',
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
@@ -112,7 +114,7 @@ return [
             'enableFlashMessages' => false,
             // -------------------
             // TODO 11 - Insert ---
-            'admins' => ['roepkix'],
+            'admins' => ['roepke'],
             // --------------------
             'controllerMap' => [
                 'registration' => 'frontend\controllers\RegistrationController',
