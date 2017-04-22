@@ -3,6 +3,7 @@
 $c = parse_ini_file(__DIR__ . '/../../common/config/secure.ini', true);
 
 return [
+    'name'=>'Trail Application',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
         'cache' => [
@@ -24,7 +25,7 @@ return [
                 'host' => $c['smtp_host'],
                 'username' => $c['smtp_username'],
                 'password' => $c['smtp_password'],
-                'port' => '2525',
+                'port' => $c['smtp_port'],
                 'encryption' => 'tls',
             ],
             // -----------------------------
