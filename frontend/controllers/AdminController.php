@@ -10,7 +10,9 @@ use yii\filters\VerbFilter;
 /**
  * AdminController allows you to administrate users.
  * @package frontend\controllers
+ *
  * @author Rene Roepke
+ *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class AdminController extends BaseAdminController

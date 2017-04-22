@@ -10,6 +10,8 @@ use yii\web\IdentityInterface;
 /**
  * User model
  *
+ * @author Rene Roepke
+ *
  * @property integer $id
  * @property string $username
  * @property string $password_hash

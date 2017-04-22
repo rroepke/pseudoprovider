@@ -6,6 +6,10 @@ use common\models\User;
 
 /**
  * Signup form
+ *
+ * @author Rene Roepke
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class SignupForm extends Model
 {

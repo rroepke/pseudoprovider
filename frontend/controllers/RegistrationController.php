@@ -10,7 +10,9 @@ use dektrium\user\models\User;
 /**
  * Class RegistrationController
  * @package frontend\controllers
+ *
  * @author Rene Roepke
+ *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class RegistrationController extends BaseRegistrationController{

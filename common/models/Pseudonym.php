@@ -7,6 +7,8 @@ use Yii;
 /**
  * This is the model class for table "pseudonym".
  *
+ * @author Rene Roepke
+ *
  * @property integer $id
  * @property integer $user
  * @property string $pseudonym
